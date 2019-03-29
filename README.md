@@ -1,3 +1,13 @@
+Boiler Plate for a React using Firebase Project.
+
+Created using create-react-app and tweaked to match with Wesbos's React Tutorial
+  > My work from that is here: https://github.com/NathanHaberman/Wesbos-React-Tutorial
+
+Have a good day!
+
+
+
+==================================================================================
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
