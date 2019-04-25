@@ -1,19 +1,10 @@
-import React, { Component } from 'react';
-// import base from "../firebase";
-import Example from './Example';
-import Header from './Header';
+import React from 'react';
 
-class App extends Component {
-  exampleFunction = params => {
-    console.log("example");
-  }
-
+class App extends React.Component {
   render() {
     return (
       <div>
-        <Header />
-        <p>App Component</p>
-        <Example exampleFunction={this.exampleFunction} />
+        <h1>User Page!</h1>
       </div>
     );
   }

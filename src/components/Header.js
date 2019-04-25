@@ -3,8 +3,8 @@ import React from 'react';
 class Header extends React.Component {
   render() {
     return (
-      <nav class="row p-3 justify-content-between">
-        <div class="col-3">
+      <nav className="row p-3 justify-content-between">
+        <div className="col-3">
           <img src="" alt="Logo" />
         </div>
         {/* TODO: Finish Header */}
