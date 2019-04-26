@@ -8,6 +8,8 @@ class Register extends React.Component {
   passwordRef = React.createRef();
   confirmPasswordRef = React.createRef();
 
+  errorMessage = null;
+
   register = event => {
     event.preventDefault();
     firebaseApp
@@ -17,15 +19,15 @@ class Register extends React.Component {
         this.passwordRef.current.value
       )
       .catch(function(error) {
-        console.log(error.message);
+        this.errorMessage = error.message;
+        this.props.history.push("/");
       });
-    // firebaseApp.initializedApp
+    // firebaseApp
     //   .ref("users/" + firebaseApp.auth().currentUser.uid)
     //   .set({
     //     firstName: this.firstNameRef,
     //     lastName: this.lastNameRef
     //   });
-    console.log("hi");
     this.props.signIn(firebaseApp.auth().currentUser.uid);
   };
 
@@ -33,6 +35,7 @@ class Register extends React.Component {
     return (
       <div>
         <h2>Register</h2>
+        <p className="text-danger">{this.errorMessage}</p>
         <form onSubmit={this.register}>
           <div className="form-group">
             <label htmlFor="firstName">First Name</label>

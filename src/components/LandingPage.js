@@ -12,7 +12,6 @@ class LandingPage extends React.Component {
     var user = { ...this.state.user };
     user = newUser;
     this.setState({ user }, () => {
-      console.log(this.state.user);
       this.props.history.push(`/user/${this.state.user}`);
     });
   };

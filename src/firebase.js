@@ -3,7 +3,7 @@ import firebase from "firebase";
 
 const firebaseApp = firebase.initializeApp({
   // Firebase info here
-  apiKey: "AIzaSyBPc67YP8til_UZzg5iuzTgyGmE5SsIC48",
+  apiKey: "AIzaSyCdit_qmzq6ZeDoyUFSpz7JwoH4ytoYwy8",
   authDomain: "the-hideout-eb132.firebaseapp.com",
   databaseURL: "https://the-hideout-eb132.firebaseio.com",
   projectId: "the-hideout-eb132",
