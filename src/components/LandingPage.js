@@ -4,16 +4,9 @@ import Login from "./Login";
 import Register from "./Register";
 
 class LandingPage extends React.Component {
-  state = {
-    user: null
-  };
 
-  signIn = newUser => {
-    var user = { ...this.state.user };
-    user = newUser;
-    this.setState({ user }, () => {
-      this.props.history.push(`/user/${this.state.user}`);
-    });
+  signIn = () => {
+    this.props.history.push("/user");
   };
 
   render() {

@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 // Import Components here
 import LandingPage from "./LandingPage";
-import App from "./App";
+import User from "./User";
 import NotFound from "./NotFound";
 
 const Router = () => (
@@ -11,7 +11,7 @@ const Router = () => (
       {/* <Route path="/example/:exampleID" component={Example} /> */}
       {/* component={NotFound} will 404 when there is no path match */}
       <Route exact path="/" component={LandingPage} />
-      <Route path="/user/:userId" component={App} />
+      <Route path="/user" component={User} />
       <Route component={NotFound} />
     </Switch>
   </BrowserRouter>

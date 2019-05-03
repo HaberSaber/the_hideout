@@ -1,10 +1,17 @@
 import React from 'react';
+import {firebaseApp} from "../firebase";
 
-class App extends React.Component {
+class User extends React.Component {
+  state = {
+    user: firebaseApp.auth().currentUser.uid
+  }
+  
   logout = () => {
-    // user = null;
-    // this.setState({ user })
     this.props.history.push("/");
+  }
+  
+  componentDidMount() {
+    console.log(this.state.user);
   }
 
   render() {
@@ -17,4 +24,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default User;
