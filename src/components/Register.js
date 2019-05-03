@@ -9,6 +9,7 @@ class Register extends React.Component {
     passwordError: false,
     confirmPasswordError: false,
     emailFormatError: false,
+    emailInUseError: false,
     weakPasswordError: false,
     passwordMatchError: false
   };
@@ -74,12 +75,16 @@ class Register extends React.Component {
         this.props.signIn();
       }.bind(this))
       .catch(function(error) {
-        // TODO: Catch an email that is already in user with code = "auth/email-already-in-use"
         console.log(error.code);
         if (error.code === "auth/invalid-email") {
           newState.emailFormatError = true;
         } else {
           newState.emailFormatError = false;
+        }
+        if (error.code === "auth/email-already-in-use") {
+          newState.emailInUseError = true;
+        } else {
+          newState.emailInUseError = false;
         }
         if (error.code === "auth/weak-password") {
           newState.weakPasswordError = true;
@@ -136,6 +141,9 @@ class Register extends React.Component {
             )}
             {this.state.emailFormatError && (
               <small className="text-danger">Email format is invalid</small>
+            )}
+            {this.state.emailInUseError && (
+              <small className="text-danger">Email is already in use</small>
             )}
           </div>
           <div className="form-group">
