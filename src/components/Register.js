@@ -31,6 +31,7 @@ class Register extends React.Component {
     };
     let newState = { ...this.state };
     let stateChange = false;
+
     // Validate which fields have been filled out and what ones have not
     for (let key in user) {
       if (user[key].length === 0) {
@@ -45,6 +46,7 @@ class Register extends React.Component {
     }
     // Reset to false for multiple checks
     newState.passwordMatchError = false;
+
     // Check if passwords match
     if (user.password !== user.confirmPassword) {
       newState.passwordMatchError = true;
@@ -52,47 +54,56 @@ class Register extends React.Component {
       newState.confirmPasswordError = false;
       stateChange = true;
     }
+
+    // Change state if there was a change
     if (stateChange) {
       this.setState(newState);
-      return
+      // Check if any errors are in the new state, only continues when there are no errors
+      const newStateHasError = Object.values(newState).some(value => value);
+      if (newStateHasError) {
+        return;
+      }
     }
+
     // Add user to auth
     firebaseApp
       .auth()
-      .createUserWithEmailAndPassword(
-        this.emailRef.current.value,
-        this.passwordRef.current.value
-      )
+      .createUserWithEmailAndPassword(user.email, user.password)
       // Add user profile
-      .then(function() {
-        firebaseApp
-          .database()
-          .ref("users/" + firebaseApp.auth().currentUser.uid)
-          .set({
-            firstName: user.firstName,
-            lastName: user.lastName
-          });
-        this.props.signIn();
-      }.bind(this))
-      .catch(function(error) {
-        console.log(error.code);
-        if (error.code === "auth/invalid-email") {
-          newState.emailFormatError = true;
-        } else {
-          newState.emailFormatError = false;
-        }
-        if (error.code === "auth/email-already-in-use") {
-          newState.emailInUseError = true;
-        } else {
-          newState.emailInUseError = false;
-        }
-        if (error.code === "auth/weak-password") {
-          newState.weakPasswordError = true;
-        } else {
-          newState.weakPasswordError = false;
-        }
-        this.setState(newState);
-      }.bind(this));
+      .then(
+        function() {
+          firebaseApp
+            .database()
+            .ref("users/" + firebaseApp.auth().currentUser.uid)
+            .set({
+              firstName: user.firstName,
+              lastName: user.lastName,
+              email: user.email
+            });
+          this.props.signIn();
+        }.bind(this)
+      )
+      .catch(
+        function(error) {
+          console.log(error.code);
+          if (error.code === "auth/invalid-email") {
+            newState.emailFormatError = true;
+          } else {
+            newState.emailFormatError = false;
+          }
+          if (error.code === "auth/email-already-in-use") {
+            newState.emailInUseError = true;
+          } else {
+            newState.emailInUseError = false;
+          }
+          if (error.code === "auth/weak-password") {
+            newState.weakPasswordError = true;
+          } else {
+            newState.weakPasswordError = false;
+          }
+          this.setState(newState);
+        }.bind(this)
+      );
   };
 
   render() {
