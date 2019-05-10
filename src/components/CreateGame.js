@@ -1,14 +1,36 @@
 import React from "react";
+import { firebaseApp } from "../firebase";
 
 class CreateGame extends React.Component {
+  state = {
+    gangNameError: false
+  };
+
   gangNameRef = React.createRef();
-  // playerNameRef = React.createRef();
 
-  createGame = () => {};
-
-  searchForPlayer = event => {
-    console.log(event.target.value);
-  }
+  createGame = event => {
+    event.preventDefault();
+    let newState = { ...this.state };
+    const gangName = this.gangNameRef.current.value;
+    if (gangName.length === 0) {
+      newState.gangNameError = true;
+      this.setState(newState);
+      return;
+    }
+    // Create Unqiue ID
+    const gameId = Date.now();
+    // Shortcut to database
+    let database = firebaseApp.database();
+    // Create Game in Firebase
+    database.ref("games/" + gameId).set({
+      gangName: gangName.toLowerCase(),
+      owner: firebaseApp.auth().currentUser.uid
+    });
+    // Set game as the user's current game
+    database
+      .ref(`users/${firebaseApp.auth().currentUser.uid}/currentGame`)
+      .set(gameId);
+  };
 
   render() {
     return (
@@ -25,20 +47,12 @@ class CreateGame extends React.Component {
               placeholder="The Pineapple Gang"
             />
           </div>
-          <div className="form-group">
-            <label htmlFor="Add Player">Add Player</label>
-            <input
-              className="form-control"
-              type="text"
-              // ref={this.playerNameRef}
-              name="playerName"
-              placeholder="Mr. Knife McStabby"
-              onChange={this.searchForPlayer}
-            />
-          </div>
-
-          {/* TODO: Generate list of names matching the above input text, allow DMs to select the players from that list then */}
-
+          {this.state.gangNameError && (
+            <small className="text-danger">Gang name is required</small>
+          )}
+          <button type="submit" className="btn btn-outline-primary">
+            Create Game
+          </button>
         </form>
       </div>
     );

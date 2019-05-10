@@ -76,9 +76,9 @@ class Register extends React.Component {
             .database()
             .ref("users/" + firebaseApp.auth().currentUser.uid)
             .set({
-              firstName: user.firstName,
-              lastName: user.lastName,
-              email: user.email
+              firstName: user.firstName.toLowerCase(),
+              lastName: user.lastName.toLowerCase(),
+              email: user.email.toLowerCase()
             });
           this.props.signIn();
         }.bind(this)

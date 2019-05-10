@@ -2,6 +2,7 @@ import React from "react";
 import base, { firebaseApp } from "../firebase";
 
 import Header from "./Header";
+import CreateGame from "./CreateGame";
 
 class Home extends React.Component {
   state = {
@@ -18,7 +19,7 @@ class Home extends React.Component {
         state: "user"
       });
     }
-  };
+  }
 
   // Checks if there is a user logged in
   isThereALoggedInUser = () => {
@@ -45,8 +46,14 @@ class Home extends React.Component {
       });
   };
 
+  changeGame = id => {
+    let newState = { ...this.state };
+    newState.user.currentGame = id;
+    this.setState(newState);
+  };
+
   // NOTE: This is breaking the site and I am not sure why
-  // 
+  //
   // changeTab = (tab) => {
   //   let newState = { ...this.state };
   //   newState.activeTab = tab;
@@ -58,8 +65,8 @@ class Home extends React.Component {
       <div className="p-3">
         <Header logout={this.logout} />
         <div className="row p-3">
+          <CreateGame />
           <div className="col-3 nav flex-column nav-pills">
-            
             {/* NOTE: This breaks the site but I am not sure why */}
 
             {/* <a className={this.state.activeTab === "hideout" ? "nav-link show active" : "nav-link"}  onClick={this.changeTab("hideout")} href="#hideout">
@@ -78,7 +85,6 @@ class Home extends React.Component {
             </div> */}
           </div>
         </div>
-        
       </div>
     );
   }
