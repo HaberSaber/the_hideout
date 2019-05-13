@@ -1,12 +1,15 @@
 import React from "react";
+import { Route, Link } from "react-router-dom";
 import base, { firebaseApp } from "../firebase";
 
 import Header from "./Header";
 import CreateGame from "./CreateGame";
+import Dashboard from "./Dashboard";
+import UserProfile from "./UserProfile";
 
 class Home extends React.Component {
   state = {
-    user: {},
+    user: {}
     // activeTab: "hideout"
   };
 
@@ -52,38 +55,15 @@ class Home extends React.Component {
     this.setState(newState);
   };
 
-  // NOTE: This is breaking the site and I am not sure why
-  //
-  // changeTab = (tab) => {
-  //   let newState = { ...this.state };
-  //   newState.activeTab = tab;
-  //   this.setState(newState);
-  // };
-
   render() {
     return (
       <div className="p-3">
-        <Header logout={this.logout} />
+        <Header logout={this.logout} firstName={this.state.user.firstName} />
         <div className="row p-3">
           <CreateGame />
-          <div className="col-3 nav flex-column nav-pills">
-            {/* NOTE: This breaks the site but I am not sure why */}
 
-            {/* <a className={this.state.activeTab === "hideout" ? "nav-link show active" : "nav-link"}  onClick={this.changeTab("hideout")} href="#hideout">
-              Hideout
-            </a>
-            <a className={this.state.activeTab === "character" ? "nav-link show active" : "nav-link"} onClick={this.changeTab("character")} href="#character">
-              Character
-            </a> */}
-          </div>
-          <div className="tab-content">
-            {/* <div className="tab-pane fade show active" id="hideout">
-              Hideout
-            </div>
-            <div className="tab-pane fade" id="character">
-              Character
-            </div> */}
-          </div>
+          <Route path="/home/dashboard" component={Dashboard} />
+          <Route path="/home/user-profile" component={UserProfile} />
         </div>
       </div>
     );
