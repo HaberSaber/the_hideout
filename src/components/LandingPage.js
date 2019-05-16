@@ -1,9 +1,12 @@
 import React from "react";
+// import { firebaseApp } from "../firebase";
+
 import Login from "./Login";
 import Register from "./Register";
 
 class LandingPage extends React.Component {
-  signIn = () => {
+  signIn = id => {
+    localStorage.setItem("userId", id);
     this.props.history.push("/home");
   };
 

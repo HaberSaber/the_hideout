@@ -49,7 +49,11 @@ class Login extends React.Component {
     firebaseApp
       .auth()
       .signInWithEmailAndPassword(user.email, user.password)
-      .then(this.props.signIn())
+      .then(
+        function(firebaseUser) {
+          this.props.signIn(firebaseUser.user.uid);
+        }.bind(this)
+      )
       .catch(
         function(error) {
           console.log(error);

@@ -1,9 +1,8 @@
 import React from "react";
-import { Route, Link } from "react-router-dom";
+import { Route } from "react-router-dom";
 import base, { firebaseApp } from "../firebase";
 
 import Header from "./Header";
-import CreateGame from "./CreateGame";
 import Dashboard from "./Dashboard";
 import UserProfile from "./UserProfile";
 
@@ -14,10 +13,10 @@ class Home extends React.Component {
   };
 
   componentWillMount() {
-    const user = this.isThereALoggedInUser();
+    const id = this.isThereALoggedInUser();
     // Grab their profile if there is
-    if (user) {
-      base.syncState(`users/${user.uid}`, {
+    if (id) {
+      base.syncState(`users/${id}`, {
         context: this,
         state: "user"
       });
@@ -26,11 +25,11 @@ class Home extends React.Component {
 
   // Checks if there is a user logged in
   isThereALoggedInUser = () => {
-    const user = firebaseApp.auth().currentUser;
-    if (user === null) {
+    const id = localStorage.getItem("userId");
+    if (id === null) {
       this.props.history.push("/");
     }
-    return user;
+    return id;
   };
 
   logout = () => {
@@ -60,10 +59,12 @@ class Home extends React.Component {
       <div className="p-3">
         <Header logout={this.logout} firstName={this.state.user.firstName} />
         <div className="row p-3">
-          <CreateGame />
-
-          <Route path="/home/dashboard" component={Dashboard} />
-          <Route path="/home/user-profile" component={UserProfile} />
+          <Route path="/home/dashboard" render={() => (
+            <Dashboard user={this.state.user} />
+          )}/>
+          <Route path="/home/user-profile" render={() => (
+            <UserProfile user={this.state.user} />
+          )}/>
         </div>
       </div>
     );
