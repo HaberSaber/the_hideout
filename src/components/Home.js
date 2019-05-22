@@ -12,7 +12,7 @@ class Home extends React.Component {
     // activeTab: "hideout"
   };
 
-  componentWillMount() {
+  componentDidMount() {
     const id = this.isThereALoggedInUser();
     // Grab their profile if there is
     if (id) {
@@ -21,6 +21,10 @@ class Home extends React.Component {
         state: "user"
       });
     }
+  }
+
+  historyPush = url => {
+    this.props.history.push(url);
   }
 
   // Checks if there is a user logged in
@@ -48,19 +52,13 @@ class Home extends React.Component {
       });
   };
 
-  changeGame = id => {
-    let newState = { ...this.state };
-    newState.user.currentGame = id;
-    this.setState(newState);
-  };
-
   render() {
     return (
       <div className="p-3">
         <Header logout={this.logout} firstName={this.state.user.firstName} />
         <div className="row p-3">
           <Route path="/home/dashboard" render={() => (
-            <Dashboard user={this.state.user} />
+            <Dashboard historyPush={this.historyPush} user={this.state.user} />
           )}/>
           <Route path="/home/user-profile" render={() => (
             <UserProfile user={this.state.user} />

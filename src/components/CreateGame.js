@@ -30,30 +30,31 @@ class CreateGame extends React.Component {
     database
       .ref(`users/${firebaseApp.auth().currentUser.uid}/currentGame`)
       .set(gameId);
+    window.location.reload();
   };
 
   render() {
     return (
-      <div>
+      <div className="row mb-3">
         <h2>New Game</h2>
-        <form onSubmit={this.createGame}>
+        <form className="form-inline" onSubmit={this.createGame}>
           <div className="form-group">
-            <label htmlFor="gangName">Gang Name</label>
+            <label htmlFor="gangName">Gang Name:</label>
             <input
-              className="form-control"
+              className="form-control ml-1"
               type="text"
               ref={this.gangNameRef}
               name="gangName"
               placeholder="The Pineapple Gang"
             />
           </div>
-          {this.state.gangNameError && (
-            <small className="text-danger">Gang name is required</small>
-          )}
-          <button type="submit" className="btn btn-outline-primary">
+          <button type="submit" className="btn btn-outline-primary ml-1">
             Create Game
           </button>
         </form>
+        {this.state.gangNameError && (
+          <small className="text-danger">Gang name is required</small>
+        )}
       </div>
     );
   }
