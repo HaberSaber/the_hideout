@@ -24,7 +24,7 @@ class CreateGame extends React.Component {
     // Create Game in Firebase
     database.ref("games/" + gameId).set({
       gangName: gangName.toLowerCase(),
-      owner: firebaseApp.auth().currentUser.uid
+      owner: localStorage.getItem("user")
     });
     // Set game as the user's current game
     database
@@ -35,7 +35,7 @@ class CreateGame extends React.Component {
 
   render() {
     return (
-      <div className="row mb-3">
+      <div className="row">
         <h2>New Game</h2>
         <form className="form-inline" onSubmit={this.createGame}>
           <div className="form-group">

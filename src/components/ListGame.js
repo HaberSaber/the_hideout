@@ -63,6 +63,9 @@ class ListGame extends React.Component {
             {this.canDelete()}
           </div>
         </div>
+        <div className="row">
+          <p className="col">Join ID: {this.props.id}</p>
+        </div>
       </div>
     );
   }

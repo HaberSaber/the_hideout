@@ -3,6 +3,7 @@ import { firebaseApp } from "../firebase";
 
 import ListGame from "./ListGame";
 import CreateGame from "./CreateGame";
+import JoinGame from "./JoinGame";
 
 class UserProfile extends React.Component {
   state = {
@@ -10,10 +11,6 @@ class UserProfile extends React.Component {
   };
 
   componentDidMount() {
-    this.getOwnedGames();
-  }
-
-  getOwnedGames = () => {
     let newState = { ...this.state };
     firebaseApp
       .database()
@@ -29,7 +26,7 @@ class UserProfile extends React.Component {
           }
         }.bind(this)
       );
-  };
+  }
 
   listOwnedGames = games => {
     let items = [];
@@ -56,7 +53,9 @@ class UserProfile extends React.Component {
           <div className="col">
             <CreateGame />
           </div>
-          <div className="col" />
+          <div className="col">
+            <JoinGame />
+          </div>
         </div>
         <hr />
         <div className="row">

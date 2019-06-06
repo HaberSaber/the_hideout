@@ -12,6 +12,8 @@ class Home extends React.Component {
     // activeTab: "hideout"
   };
 
+  homeRendered = false;
+
   componentDidMount() {
     const id = this.isThereALoggedInUser();
     // Grab their profile if there is
@@ -21,6 +23,7 @@ class Home extends React.Component {
         state: "user"
       });
     }
+    this.homeRendered = true;
   }
 
   historyPush = url => {
@@ -58,7 +61,7 @@ class Home extends React.Component {
         <Header logout={this.logout} firstName={this.state.user.firstName} />
         <div className="row p-3">
           <Route path="/home/dashboard" render={() => (
-            <Dashboard historyPush={this.historyPush} user={this.state.user} />
+            this.homeRendered && <Dashboard historyPush={this.historyPush} user={this.state.user} />
           )}/>
           <Route path="/home/user-profile" render={() => (
             <UserProfile user={this.state.user} />
