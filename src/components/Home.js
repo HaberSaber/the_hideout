@@ -32,7 +32,7 @@ class Home extends React.Component {
 
   // Checks if there is a user logged in
   isThereALoggedInUser = () => {
-    const id = localStorage.getItem("userId");
+    const id = localStorage.getItem("user");
     if (id === null) {
       this.props.history.push("/");
     }

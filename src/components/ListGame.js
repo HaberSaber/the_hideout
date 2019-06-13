@@ -3,6 +3,13 @@ import { firebaseApp } from "../firebase";
 
 class ListGame extends React.Component {
   id = Number(this.props.id);
+  owner = false;
+
+  componentDidMount() {
+    if (this.props.details["owner"] === localStorage.getItem("user")) {
+      this.owner = true;
+    }
+  }
 
   swtichGame = () => {
     firebaseApp
@@ -13,7 +20,7 @@ class ListGame extends React.Component {
   };
 
   deleteGame = () => {
-    if (this.props.owned) {
+    if (this.owner) {
       if (this.id === this.props.currentGame) {
         firebaseApp
           .database()
@@ -29,10 +36,44 @@ class ListGame extends React.Component {
   };
 
   canDelete = () => {
-    if (this.props.owned) {
+    if (this.owner) {
       return (
         <button onClick={this.deleteGame} className="btn btn-outline-danger">
           Delete
+        </button>
+      );
+    }
+  };
+
+  leaveGame = () => {
+    if (!this.owner) {
+      if (this.id === this.props.currentGame) {
+        firebaseApp
+          .database()
+          .ref(`users/${localStorage.getItem("user")}/currentGame`)
+          .set(null);
+      }
+      firebaseApp
+        .database()
+        .ref("player")
+        .orderByChild("game")
+        .equalTo(this.id)
+        .once("value", data => {
+          console.log(data);
+          if (data.player === localStorage.getItem("user")) {
+            // firebaseApp.database().ref("player")
+          }
+        })
+        .remove();
+      window.location.reload();
+    }
+  };
+
+  canLeave = () => {
+    if (!this.owner) {
+      return (
+        <button onClick={this.leaveGame} className="btn btn-outline-danger">
+          Leave Game
         </button>
       );
     }
@@ -53,7 +94,7 @@ class ListGame extends React.Component {
   render() {
     return (
       <div>
-        <hr/>
+        <hr />
         <div className="row mt-3">
           <div className="col">
             <h4>{this.props.details.gangName}</h4>
@@ -61,11 +102,14 @@ class ListGame extends React.Component {
           <div className="col row">
             {this.currentGames()}
             {this.canDelete()}
+            {this.canLeave()}
           </div>
         </div>
-        <div className="row">
-          <p className="col">Join ID: {this.props.id}</p>
-        </div>
+        {this.owner && (
+          <div className="row">
+            <p className="col">Join ID: {this.props.id}</p>
+          </div>
+        )}
       </div>
     );
   }

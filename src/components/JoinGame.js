@@ -5,7 +5,7 @@ class JoinGame extends React.Component {
   state = {
     joinIdError: false,
     joinError: false,
-    dmError: false,
+    dmError: false
   };
 
   joinIdRef = React.createRef();
@@ -21,46 +21,54 @@ class JoinGame extends React.Component {
       return;
     }
     // Reset to false in case it was at one time true
-    newState.joinIdError = false
+    newState.joinIdError = false;
 
     let joinError = false;
     let dmError = false;
-    firebaseApp.database().ref("games/" + joinId).once('value').then(function(data) {
-      // Check if there is a game with that ID
-      if (!data.val()) {
-        joinError = true;
-      }
-      // Check if the user owns the game
-      if (data.val().owner === localStorage.getItem("user")) {
-        console.log("This is your game");
-        dmError = true;
-      }
-    })
-    // If there is not a game
-    if (joinError) {
-      newState.joinError = true;
-      this.setState(newState)
-      return
-    }
-    if (dmError) {
-      newState.dmError = true;
-      this.setState(newState)
-      return
-    }
-    // // Create Unqiue ID
-    // const playerId = Date.now();
-    // // Shortcut to database
-    // let database = firebaseApp.database();
-    // // Create Player in Firebase
-    // database.ref("players/" + playerId).set({
-    //   game: joinId,
-    //   player: localStorage.getItem("user")
-    // });
-    // // Set game as the user's current game
-    // database
-    //   .ref(`users/${firebaseApp.auth().currentUser.uid}/currentGame`)
-    //   .set(joinId);
-    // window.location.reload();
+    firebaseApp
+      .database()
+      .ref("games/" + joinId)
+      .once("value")
+      .then(function(data) {
+        // Check if there is a game with that ID
+        if (!data.val()) {
+          joinError = true;
+          return
+        }
+        // Check if the user owns the game
+        if (data.val().owner === localStorage.getItem("user")) {
+          console.log("This is your game");
+          dmError = true;
+        }
+      })
+      .then(() => {
+        // If there is not a game
+        if (joinError) {
+          newState.joinError = true;
+          this.setState(newState);
+          return;
+        }
+        // If you own the game
+        if (dmError) {
+          newState.dmError = true;
+          this.setState(newState);
+          return;
+        }
+      });
+    // Create Unqiue ID
+    const playerId = Date.now();
+    // Shortcut to database
+    let database = firebaseApp.database();
+    // Create Player in Firebase
+    database.ref("players/" + playerId).set({
+      game: joinId,
+      player: localStorage.getItem("user")
+    });
+    // Set game as the user's current game
+    database
+      .ref(`users/${firebaseApp.auth().currentUser.uid}/currentGame`)
+      .set(joinId);
+    window.location.reload();
   };
 
   render() {
@@ -82,14 +90,16 @@ class JoinGame extends React.Component {
             Join Game
           </button>
         </form>
-        {this.state.gameIdError && (
+        {this.state.joinIdError && (
           <small className="text-danger">Join ID is required</small>
         )}
         {this.state.joinError && (
-          <small className="text-danger">No Game with that Join ID</small>
+          <small className="text-danger">Found no game with that Join ID</small>
         )}
         {this.state.dmError && (
-          <small className="text-danger">You can't join a game that you DM</small>
+          <small className="text-danger">
+            You can't join a game that you DM
+          </small>
         )}
       </div>
     );

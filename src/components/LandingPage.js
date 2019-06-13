@@ -6,7 +6,7 @@ import Register from "./Register";
 
 class LandingPage extends React.Component {
   signIn = id => {
-    localStorage.setItem("userId", id);
+    localStorage.setItem("user", id);
     this.props.history.push("/home");
   };
 
