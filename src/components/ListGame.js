@@ -3,7 +3,7 @@ import { firebaseApp } from "../firebase";
 
 class ListGame extends React.Component {
   id = Number(this.props.id);
-  owner = false;
+  owner = this.props.owner;
 
   componentDidMount() {
     if (this.props.details["owner"] === localStorage.getItem("user")) {
@@ -55,15 +55,7 @@ class ListGame extends React.Component {
       }
       firebaseApp
         .database()
-        .ref("player")
-        .orderByChild("game")
-        .equalTo(this.id)
-        .once("value", data => {
-          console.log(data);
-          if (data.player === localStorage.getItem("user")) {
-            // firebaseApp.database().ref("player")
-          }
-        })
+        .ref(`player/${this.id}`)
         .remove();
       window.location.reload();
     }

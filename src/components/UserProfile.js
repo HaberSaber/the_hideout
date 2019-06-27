@@ -7,23 +7,20 @@ import JoinGame from "./JoinGame";
 
 class UserProfile extends React.Component {
   state = {
-    ownedGames: null,
+    ownedGames: {},
     joinedGames: {}
   };
 
-// I need to wait for the data to be received.
-// Might need to use a Promise, need to learn how that works
-
   componentDidMount() {
     this.getGames(newState => {
-      console.log(newState);
-      // Wait to set state till we get the games
       this.setState(newState);
     });
   }
 
   getGames(_callback) {
     let newState = { ...this.state };
+    let dmReady = false;
+    let playerReady = false;
     // Get all DM games
     firebaseApp
       .database()
@@ -34,7 +31,8 @@ class UserProfile extends React.Component {
         if (data.val()) {
           newState.ownedGames = data.val();
         }
-      });
+      })
+      .then((dmReady = true));
     // Get all player games
     firebaseApp
       .database()
@@ -44,33 +42,40 @@ class UserProfile extends React.Component {
       .on("value", data => {
         // Object of games
         let games = data.val();
-        // Get each game and map over them
-        Object.values(games).forEach(value => {
-          // value is ever game, value.game is the game id
-          firebaseApp
-            .database()
-            .ref(`games/${value.game}`)
-            .once("value", data => {
-              // add to state as {"game id": {game info}}
-              newState.joinedGames[value.game] = data.val();
-              console.log(Object.keys(newState.joinedGames));
-            });
-        });
+        if (games) {
+          // Get each game and map over them
+          Object.values(games).forEach(value => {
+            // value is ever game, value.game is the game id
+            firebaseApp
+              .database()
+              .ref(`games/${value.game}`)
+              .once("value", data => {
+                // add to state as {"game id": {game info}}
+                newState.joinedGames[value.game] = data.val();
+              })
+              .then((playerReady = true));
+          });
+        }
       });
-    _callback(newState);
+    let checkIfDone = setInterval(() => {
+      if (dmReady && playerReady) {
+        console.log(newState.joinedGames);
+        console.log(newState.ownedGames);
+        _callback(newState);
+        clearInterval(checkIfDone);
+      }
+    }, 350);
   }
 
-  listGames = games => {
+  listGames = (games, owner) => {
     let items = [];
-    if (games) {
-      console.log(Object.keys(games));
-    }
     if (games) {
       Object.keys(games).forEach(key => {
         items.push(
           <ListGame
             currentGame={this.props.user.currentGame}
             details={games[key]}
+            owner={owner}
             id={key}
             key={key}
           />
@@ -80,6 +85,46 @@ class UserProfile extends React.Component {
     return items;
   };
 
+  createGame = gangName => {
+    if (gangName) {
+      // Create Unqiue ID
+      const gameId = Date.now();
+      // Shortcut to database
+      let database = firebaseApp.database();
+      // Create Game in Firebase
+      database.ref("games/" + gameId).set({
+        gangName: gangName.toLowerCase(),
+        owner: localStorage.getItem("user")
+      });
+      // Set game as the user's current game
+      database
+        .ref(`users/${firebaseApp.auth().currentUser.uid}/currentGame`)
+        .set(gameId);
+      this.getGames(newState => {
+        this.setState(newState);
+      });
+    }
+  };
+
+  joinGame = joinId => {
+    // Create Unqiue ID
+    const playerId = Date.now();
+    // Shortcut to database
+    let database = firebaseApp.database();
+    // Create Player in Firebase
+    database.ref("players/" + playerId).set({
+      game: joinId,
+      player: localStorage.getItem("user")
+    });
+    // Set game as the user's current game
+    database
+      .ref(`users/${firebaseApp.auth().currentUser.uid}/currentGame`)
+      .set(joinId);
+    this.getGames(newState => {
+      this.setState(newState);
+    });
+  };
+
   render() {
     return (
       <div className="col">
@@ -87,21 +132,21 @@ class UserProfile extends React.Component {
         <hr />
         <div className="row">
           <div className="col">
-            <CreateGame />
+            <CreateGame createGame={this.createGame} />
           </div>
           <div className="col">
-            <JoinGame />
+            <JoinGame joinGame={this.joinGame} />
           </div>
         </div>
         <hr />
         <div className="row">
           <div className="col">
             <h3 className="row">DM Games</h3>
-            {this.listGames(this.state.ownedGames)}
+            {this.listGames(this.state.ownedGames, true)}
           </div>
           <div className="col">
             <h3>Player Games</h3>
-            {this.listGames(this.state.joinedGames)}
+            {this.listGames(this.state.joinedGames, false)}
           </div>
         </div>
       </div>

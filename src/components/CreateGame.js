@@ -1,5 +1,4 @@
 import React from "react";
-import { firebaseApp } from "../firebase";
 
 class CreateGame extends React.Component {
   state = {
@@ -17,20 +16,7 @@ class CreateGame extends React.Component {
       this.setState(newState);
       return;
     }
-    // Create Unqiue ID
-    const gameId = Date.now();
-    // Shortcut to database
-    let database = firebaseApp.database();
-    // Create Game in Firebase
-    database.ref("games/" + gameId).set({
-      gangName: gangName.toLowerCase(),
-      owner: localStorage.getItem("user")
-    });
-    // Set game as the user's current game
-    database
-      .ref(`users/${firebaseApp.auth().currentUser.uid}/currentGame`)
-      .set(gameId);
-    window.location.reload();
+    this.props.createGame(gangName);
   };
 
   render() {

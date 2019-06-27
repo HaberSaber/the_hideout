@@ -55,20 +55,7 @@ class JoinGame extends React.Component {
           return;
         }
       });
-    // Create Unqiue ID
-    const playerId = Date.now();
-    // Shortcut to database
-    let database = firebaseApp.database();
-    // Create Player in Firebase
-    database.ref("players/" + playerId).set({
-      game: joinId,
-      player: localStorage.getItem("user")
-    });
-    // Set game as the user's current game
-    database
-      .ref(`users/${firebaseApp.auth().currentUser.uid}/currentGame`)
-      .set(joinId);
-    window.location.reload();
+    this.props.joinGame(joinId);
   };
 
   render() {
