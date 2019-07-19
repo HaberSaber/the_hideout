@@ -56,11 +56,13 @@ class UserProfile extends React.Component {
               .then((playerReady = true));
           });
         }
+        else {
+          playerReady = true;
+        }
       });
     let checkIfDone = setInterval(() => {
+      console.log("Player: " + playerReady);
       if (dmReady && playerReady) {
-        console.log(newState.joinedGames);
-        console.log(newState.ownedGames);
         _callback(newState);
         clearInterval(checkIfDone);
       }
@@ -69,6 +71,7 @@ class UserProfile extends React.Component {
 
   listGames = (games, owner) => {
     let items = [];
+    console.log();
     if (games) {
       Object.keys(games).forEach(key => {
         items.push(
@@ -91,9 +94,18 @@ class UserProfile extends React.Component {
       const gameId = Date.now();
       // Shortcut to database
       let database = firebaseApp.database();
+      // Create the game as title case
+      let stringLower = gangName.toLowerCase();
+      let stringSplit = stringLower.split(" ");
+      for (let i = 0; i < stringSplit.length; i++) {
+        // Capitalize the first letter and add the rest of the word to the end
+        stringSplit[i] = stringSplit[i].charAt(0).toUpperCase() + stringSplit[i].slice(1);
+      }
+      // Combine the words back togther
+      let name = stringSplit.join(" ");
       // Create Game in Firebase
       database.ref("games/" + gameId).set({
-        gangName: gangName.toLowerCase(),
+        gangName: name,
         owner: localStorage.getItem("user")
       });
       // Set game as the user's current game
@@ -123,6 +135,22 @@ class UserProfile extends React.Component {
     this.getGames(newState => {
       this.setState(newState);
     });
+  };
+
+  deleteGame = () => {
+    if (this.owner) {
+      if (this.id === this.props.currentGame) {
+        firebaseApp
+          .database()
+          .ref(`users/${localStorage.getItem("user")}/currentGame`)
+          .set(null);
+      }
+      firebaseApp
+        .database()
+        .ref(`games/${this.id}`)
+        .remove();
+      window.location.reload();
+    }
   };
 
   render() {

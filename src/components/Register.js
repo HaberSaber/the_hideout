@@ -72,12 +72,18 @@ class Register extends React.Component {
       // Add user profile
       .then(
         function() {
+          // Setting first letters of name to upper case
+          let firstName = user.firstName.toLowerCase()
+          firstName = firstName.charAt(0).toUpperCase() + user.firstName.slice(1);
+          let lastName = user.lastName.toLowerCase()
+          lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1);
+          
           firebaseApp
             .database()
             .ref("users/" + firebaseApp.auth().currentUser.uid)
             .set({
-              firstName: user.firstName.toLowerCase(),
-              lastName: user.lastName.toLowerCase(),
+              firstName: firstName,
+              lastName: lastName,
               email: user.email.toLowerCase()
             });
           this.props.signIn();
