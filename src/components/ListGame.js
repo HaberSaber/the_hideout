@@ -4,6 +4,7 @@ import { firebaseApp } from "../firebase";
 class ListGame extends React.Component {
   id = Number(this.props.id);
   owner = this.props.owner;
+  currentGame = Number(this.props.currentGame)
 
   componentDidMount() {
     if (this.props.details["owner"] === localStorage.getItem("user")) {
@@ -21,7 +22,7 @@ class ListGame extends React.Component {
 
   deleteGame = () => {
     if (this.owner) {
-      if (this.id === this.props.currentGame) {
+      if (this.id === this.currentGame) {
         firebaseApp
           .database()
           .ref(`users/${localStorage.getItem("user")}/currentGame`)
@@ -47,7 +48,7 @@ class ListGame extends React.Component {
 
   leaveGame = () => {
     if (!this.owner) {
-      if (this.id === this.props.currentGame) {
+      if (this.id === this.currentGame) {
         firebaseApp
           .database()
           .ref(`users/${localStorage.getItem("user")}/currentGame`)
@@ -55,8 +56,18 @@ class ListGame extends React.Component {
       }
       firebaseApp
         .database()
-        .ref(`player/${this.id}`)
-        .remove();
+        .ref("players")
+        .orderByChild("player")
+        .equalTo(localStorage.getItem("user"))
+        .once("value", data => {
+          for (let playerId in data.val()) {
+            let playerIdInt = Number(data.val()[playerId]["game"])
+            if (playerIdInt === this.id) {
+              console.log(playerId);
+              firebaseApp.database().ref(`players/${playerId}`).remove()
+            }
+          }
+        })
       window.location.reload();
     }
   };
@@ -72,7 +83,7 @@ class ListGame extends React.Component {
   };
 
   currentGames = () => {
-    if (this.id === this.props.currentGame) {
+    if (this.id === this.currentGame) {
       return <p className="col">Current Game</p>;
     } else {
       return (

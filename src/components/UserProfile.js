@@ -55,13 +55,11 @@ class UserProfile extends React.Component {
               })
               .then((playerReady = true));
           });
-        }
-        else {
+        } else {
           playerReady = true;
         }
       });
     let checkIfDone = setInterval(() => {
-      console.log("Player: " + playerReady);
       if (dmReady && playerReady) {
         _callback(newState);
         clearInterval(checkIfDone);
@@ -71,7 +69,6 @@ class UserProfile extends React.Component {
 
   listGames = (games, owner) => {
     let items = [];
-    console.log();
     if (games) {
       Object.keys(games).forEach(key => {
         items.push(
@@ -99,7 +96,8 @@ class UserProfile extends React.Component {
       let stringSplit = stringLower.split(" ");
       for (let i = 0; i < stringSplit.length; i++) {
         // Capitalize the first letter and add the rest of the word to the end
-        stringSplit[i] = stringSplit[i].charAt(0).toUpperCase() + stringSplit[i].slice(1);
+        stringSplit[i] =
+          stringSplit[i].charAt(0).toUpperCase() + stringSplit[i].slice(1);
       }
       // Combine the words back togther
       let name = stringSplit.join(" ");
@@ -110,7 +108,7 @@ class UserProfile extends React.Component {
       });
       // Set game as the user's current game
       database
-        .ref(`users/${firebaseApp.auth().currentUser.uid}/currentGame`)
+        .ref(`users/${localStorage.getItem("user")}/currentGame`)
         .set(gameId);
       this.getGames(newState => {
         this.setState(newState);
@@ -123,15 +121,30 @@ class UserProfile extends React.Component {
     const playerId = Date.now();
     // Shortcut to database
     let database = firebaseApp.database();
-    // Create Player in Firebase
-    database.ref("players/" + playerId).set({
-      game: joinId,
-      player: localStorage.getItem("user")
-    });
+
+    let isPlayerAlready = false;
+    database
+      .ref("players")
+      .orderByChild("player")
+      .equalTo(localStorage.getItem("user"))
+      .once("value", data => {
+        for (let playerId in data.val()) {
+          if (data.val()[playerId]["game"] === joinId) {
+            isPlayerAlready = true;
+          }
+        }
+      });
+    if (!isPlayerAlready) {
+      // Create Player in Firebase
+      database.ref("players/" + playerId).set({
+        game: joinId,
+        player: localStorage.getItem("user")
+      });
+    }
     // Set game as the user's current game
     database
       .ref(`users/${firebaseApp.auth().currentUser.uid}/currentGame`)
-      .set(joinId);
+      .set(Number(joinId));
     this.getGames(newState => {
       this.setState(newState);
     });

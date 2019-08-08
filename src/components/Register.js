@@ -86,7 +86,7 @@ class Register extends React.Component {
               lastName: lastName,
               email: user.email.toLowerCase()
             });
-          this.props.signIn();
+          this.props.signIn(firebaseApp.auth().currentUser.uid);
         }.bind(this)
       )
       .catch(
