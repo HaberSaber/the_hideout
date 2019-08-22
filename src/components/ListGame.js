@@ -17,7 +17,7 @@ class ListGame extends React.Component {
       .database()
       .ref(`users/${localStorage.getItem("user")}/currentGame`)
       .set(this.id);
-    // window.location.reload();
+    window.location.reload();
   };
 
   deleteGame = () => {

@@ -11,7 +11,7 @@ const Router = () => (
       {/* <Route path="/example/:exampleID" component={Example} /> */}
       {/* component={NotFound} will 404 when there is no path match */}
       <Route exact path="/" component={LandingPage} />
-      <Route path="/home" component={Home} />
+      <Route path="/" component={Home} />
       <Route component={NotFound} />
     </Switch>
   </BrowserRouter>

@@ -10,12 +10,12 @@ class Header extends React.Component {
         </div>
         <div className="row justify-content-end">
           <div className="col">
-            <Link to="/home/dashboard">
+            <Link to="/dashboard/hideout">
               <button className="btn btn-primary">Hideout</button>
             </Link>
           </div>
           <div className="col">
-            <Link to="/home/user-profile">
+            <Link to="/user-profile">
               <button className="btn btn-warning">Profile</button>
             </Link>
           </div>

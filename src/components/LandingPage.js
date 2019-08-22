@@ -7,7 +7,7 @@ import Register from "./Register";
 class LandingPage extends React.Component {
   signIn = id => {
     localStorage.setItem("user", id);
-    this.props.history.push("/home");
+    this.props.history.push("/dashboard/hideout");
   };
 
   render() {

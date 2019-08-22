@@ -60,10 +60,10 @@ class Home extends React.Component {
       <div className="p-3">
         <Header logout={this.logout} firstName={this.state.user.firstName} />
         <div className="row p-3">
-          <Route path="/home/dashboard" render={() => (
+          <Route path="/dashboard" render={() => (
             this.homeRendered && <Dashboard historyPush={this.historyPush} user={this.state.user} />
           )}/>
-          <Route path="/home/user-profile" render={() => (
+          <Route path="/user-profile" render={() => (
             <UserProfile user={this.state.user} />
           )}/>
         </div>
